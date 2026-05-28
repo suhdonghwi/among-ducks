@@ -2,6 +2,8 @@
 
 Among Ducks is a command-line reaction and typing game written in F# for .NET 10. You are a goose hiding among four ducks at KAIST. When the ducks make a call, type the exact same call and press Enter within 2 seconds to survive and increase your score.
 
+![Among Ducks screenshot](screenshot.png)
+
 ## Requirements
 
 - .NET 10 SDK

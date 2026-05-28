@@ -21,4 +21,4 @@ After game over, enter `restart` to start again or `quit` to exit.
 
 ## Requirement Changes
 
-No requirements were changed after the proposal.
+The proposal specified ASCII art for ducks and the goose. During implementation, the ducks and goose were difficult to distinguish clearly using ASCII art alone, especially when the player had to react quickly to duck-call events. For this reason, the game uses colored terminal pixel art by default on terminals that support ANSI styling. A plain ASCII-art fallback is still provided when color is disabled or unsupported. This is only a visual presentation change; the gameplay rules, animal arrangement, player marker, duck-call behavior, timing, scoring, restart, and quit behavior are unchanged.

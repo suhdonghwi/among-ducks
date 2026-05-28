@@ -4,11 +4,11 @@
     <TargetFramework>net10.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Types.fs" />
-    <Compile Include="Constants.fs" />
-    <Compile Include="Renderer.fs" />
-    <Compile Include="ConsoleInput.fs" />
-    <Compile Include="Game.fs" />
-    <Compile Include="Program.fs" />
+    <Compile Include="src/Types.fs" />
+    <Compile Include="src/Constants.fs" />
+    <Compile Include="src/Renderer.fs" />
+    <Compile Include="src/ConsoleInput.fs" />
+    <Compile Include="src/Game.fs" />
+    <Compile Include="src/Program.fs" />
   </ItemGroup>
 </Project>

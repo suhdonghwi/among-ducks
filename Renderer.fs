@@ -12,10 +12,76 @@ let private center width (text: string) =
         let rightPadding = width - text.Length - leftPadding
         String(' ', leftPadding) + text + String(' ', rightPadding)
 
+let private supportsAnsiStyle () =
+    let noColor = Environment.GetEnvironmentVariable("NO_COLOR")
+    let term = Environment.GetEnvironmentVariable("TERM")
+    let colorDisabled = not (String.IsNullOrEmpty noColor)
+    let terminalIsDumb = String.Equals(term, "dumb", StringComparison.OrdinalIgnoreCase)
+
+    not colorDisabled && not terminalIsDumb
+
+let private ansiEscape = string (char 27)
+
+let private styleWith ansiCode text =
+    if supportsAnsiStyle () then
+        ansiEscape + "[" + ansiCode + "m" + text + ansiEscape + "[0m"
+    else
+        text
+
+let private styleDuckCall text = styleWith "1;30;43" text
+
 let private joinCells cells =
     cells
     |> Array.map (center cellWidth)
-    |> String.concat " "
+    |> String.concat "  "
+
+let private joinCallCells call =
+    [| call; call; ""; call; call |]
+    |> Array.map (fun text ->
+        if String.IsNullOrEmpty text then
+            center cellWidth text
+        else
+            center cellWidth text |> styleDuckCall)
+    |> String.concat "  "
+
+let private pixelToText pixel =
+    let backgroundCode =
+        match pixel with
+        | 'Y' -> Some "43"
+        | 'O' -> Some "41"
+        | 'K' -> Some "40"
+        | 'C' -> Some "46"
+        | 'W' -> Some "47"
+        | _ -> None
+
+    match backgroundCode with
+    | Some code -> styleWith code "  "
+    | None -> "  "
+
+let private pixelRowToText row =
+    row
+    |> Seq.map pixelToText
+    |> String.concat ""
+
+let private joinPixelAnimalCells artLineIndex =
+    [|
+        duckPixelArt[artLineIndex] |> pixelRowToText
+        duckPixelArt[artLineIndex] |> pixelRowToText
+        goosePixelArt[artLineIndex] |> pixelRowToText
+        duckPixelArt[artLineIndex] |> pixelRowToText
+        duckPixelArt[artLineIndex] |> pixelRowToText
+    |]
+    |> String.concat "  "
+
+let private joinAsciiAnimalCells artLineIndex =
+    joinCells
+        [|
+            duckArt[artLineIndex]
+            duckArt[artLineIndex]
+            gooseArt[artLineIndex]
+            duckArt[artLineIndex]
+            duckArt[artLineIndex]
+        |]
 
 let private statusText status =
     match status with
@@ -31,22 +97,18 @@ let buildScreen score status callText inputText =
 
     let callLine =
         match callText with
-        | Some call -> joinCells [| call; call; ""; call; call |]
+        | Some call -> joinCallCells call
         | None -> ""
 
     lines.Add(callLine)
+    lines.Add("")
 
-    for artLineIndex in 0 .. duckArt.Length - 1 do
-        lines.Add(
-            joinCells
-                [|
-                    duckArt[artLineIndex]
-                    duckArt[artLineIndex]
-                    gooseArt[artLineIndex]
-                    duckArt[artLineIndex]
-                    duckArt[artLineIndex]
-                |]
-        )
+    if supportsAnsiStyle () then
+        for artLineIndex in 0 .. duckPixelArt.Length - 1 do
+            lines.Add(joinPixelAnimalCells artLineIndex)
+    else
+        for artLineIndex in 0 .. duckArt.Length - 1 do
+            lines.Add(joinAsciiAnimalCells artLineIndex)
 
     lines.Add(joinCells [| ""; ""; "^ You"; ""; "" |])
     lines.Add("")

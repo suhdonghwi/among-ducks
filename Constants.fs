@@ -54,3 +54,21 @@ let gooseArt =
         "/(____)"
         " goose "
     |]
+
+let duckPixelArt =
+    [|
+        "..YY.."
+        ".YYKYO"
+        "YYYYY."
+        ".YYYY."
+        ".O..O."
+    |]
+
+let goosePixelArt =
+    [|
+        "..CC.."
+        "..CKCO"
+        ".CWWW."
+        "CWWWW."
+        ".O..O."
+    |]
